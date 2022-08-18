@@ -8,10 +8,25 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div style="margin: 20px;">
-        <input type="button" value="rock"></input>
-        <input type="button" value="paper"></input>
-        <input type="button" value="scissors"></input>
+    <h1 class="heading">Rock Paper Scissors</h1>
+    <div class="message"></div>
+    
+    <div class="selections">
+        <button class="selection" data-selection="rock"> 🪨 </button>
+        <button class="selection" data-selection="paper"> 📄 </button>
+        <button class="selection" data-selection="scissors"> ✂️ </button>
+    </div>
+    <div class="res">
+        <div>
+            You:
+            <span class="score" data-your-score>0</span>
+        </div>
+        <div data-final-column>
+            Computer:
+            <span class="score" data-computer-score>0</span>
+        </div>
+        <!-- <div class="result-selection winner">🪨</div>
+        <div class="result-selection loser">📄</div> -->
     </div>
     <script src="script.js"></script>
 </body>

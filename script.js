@@ -1,80 +1,89 @@
-var playerWon = 0
-var compuetWon = 0
-function getComputerChoice(){
-    let x = Math.random()*100
-    if(x < 33){
-        return "rock"
-    }
-    else if(x < 66){
-        return "paper"
-    }
-    else{
-        return "scissors"
-    }
-    
+const selectionButtons = document.querySelectorAll('[data-selection]')
+const finalColumn = document.querySelector('[data-final-column]')
+const message = document.querySelector('.message');
+
+const computerScoreSpan = document.querySelector('[data-computer-score]')
+const yourScoreSpan = document.querySelector('[data-your-score]')
+let playerScore = 0;
+let computerScore = 0;
+const SELECTIONS = [
+  {
+    name: 'rock',
+    emoji: '🪨',
+    beats: 'scissors'
+  },
+  {
+    name: 'paper',
+    emoji: '📄',
+    beats: 'rock'
+  },
+  {
+    name: 'scissors',
+    emoji: '✂️',
+    beats: 'paper'
+  }
+]
+
+selectionButtons.forEach(selectionButton => {
+  selectionButton.addEventListener('click', e => {
+    const selectionName = selectionButton.dataset.selection
+    const selection = SELECTIONS.find(selection => selection.name === selectionName)
+    makeSelection(selection)
+  })
+})
+
+function makeSelection(selection) {
+  const computerSelection = randomSelection()
+  const yourWinner = isWinner(selection, computerSelection)
+  const computerWinner = isWinner(computerSelection, selection)
+
+  addSelectionResult(computerSelection, computerWinner)
+  addSelectionResult(selection, yourWinner)
+
+  if (yourWinner){
+    incrementScore(yourScoreSpan)
+    ++playerScore
+  } 
+  if (computerWinner){
+    incrementScore(computerScoreSpan)
+    ++computerScore
+  } 
+
+  if (playerScore >= 5 && computerScore < 5) {
+    message.textContent = 'Game Over. You Win!';
+    message.style.color = 'green';
+    setTimeout(function(){
+        window.location.reload();
+     }, 5000);
+
+  } else if (playerScore < 5 && computerScore >= 5) {
+    message.textContent = 'Game Over. You Lose!';
+    message.style.color = 'red';
+    setTimeout(function(){
+        window.location.reload();
+     }, 5000);
+
+  }
+  
 }
 
-function playing(playerSelection, computerSelection){
-    playerSelection = playerSelection.toLowerCase()
-    if (playerSelection == "rock"){
-        if(computerSelection == "rock"){
-            return "It is a tie!"
-        }
-        else if(computerSelection == "paper"){
-            compuetWon += 1;
-            return "you lost paper beats rock"
-        }
-        else{
-            playerWon += 1;
-            return "you won paper beats scissors"
-        }
-    }
-
-    else if(playerSelection == "paper"){
-        if(computerSelection == "rock"){
-            playerWon += 1;
-            return "you won paper beats rock"
-        }
-        else if(computerSelection == "paper"){
-            return "It is a tie!"
-        }
-        else{
-            compuetWon += 1;
-            return "you lost scissors beats paper"
-        }
-    }
-
-    else{ //scissor
-        if(computerSelection == "rock"){
-            compuetWon += 1;
-            return "you lost rock beats scissprs"
-        }
-        else if(computerSelection == "paper"){
-            playerWon += 1;
-            return "you won scissors beat paper"
-        }
-        else{
-            return "It is a tie"
-        }
-    }
+function incrementScore(scoreSpan) {
+  scoreSpan.innerText = parseInt(scoreSpan.innerText) + 1
 }
 
-function game(){
-    for (let i = 0; i < 5; i++) {
-        let a = getComputerChoice();
-        let b = prompt("Rock paper scissors: ");
-        alert(playing(b,a))
-        console.log(playing(b,a))
-     }
-
-     if(compuetWon > playerWon){
-         alert("You lost " + compuetWon + " to " + playerWon)
-     }
-     else if(playerWon > compuetWon){
-         alert("You won " + playerWon + " to " + compuetWon)
-     }
-     else{
-         alert("It is a tie overall")
-     }
+function addSelectionResult(selection, winner) {
+  const div = document.createElement('div')
+  div.innerText = selection.emoji
+  div.classList.add('result-selection')
+  if (winner) div.classList.add('winner')
+  finalColumn.after(div)
 }
-game()
+
+function isWinner(selection, opponentSelection) {
+  return selection.beats === opponentSelection.name
+}
+
+function randomSelection() {
+  const randomIndex = Math.floor(Math.random() * SELECTIONS.length)
+  return SELECTIONS[randomIndex]
+}
